@@ -26,9 +26,13 @@ app.prepare().then(() => {
             secret: SHOPIFY_API_SECRET_KEY,
             scopes: ['read_products'],
             afterAuth(ctx) {
-                const { shop, accessToken } = ctx.session;
-                console.log(accessToken);
-                ctx.redirect('/');
+                // When using the AppBridge needs to pass the shop from the query otherwise
+                // it will throw an error if not in the Shopify interface.
+                const urlParams = new URLSearchParams(ctx.request.url);
+                const shop = urlParams.get('shop');
+                const { accessToken } = ctx.session;
+                // Redirecting with the query parameter
+                ctx.redirect(`/?shop=${shop}`);
             },
         }),
     );
